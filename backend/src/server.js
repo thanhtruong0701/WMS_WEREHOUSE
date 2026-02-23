@@ -6,9 +6,19 @@ const PORT = process.env.PORT || 3001;
 
 const start = async () => {
     try {
-        // Test DB connection
-        await pool.query('SELECT 1');
-        logger.info('✅ Database connected successfully');
+        // Clear log if DATABASE_URL is missing
+        if (!process.env.DATABASE_URL) {
+            logger.warn('⚠️ DATABASE_URL is not set. Database operations will fail.');
+        }
+
+        // Test DB connection but don't crash if it fails (Vercel might retry)
+        try {
+            await pool.query('SELECT 1');
+            logger.info('✅ Database connected successfully (Supabase)');
+        } catch (dbError) {
+            logger.error('❌ Database connection failed at startup:', dbError.message);
+            // In serverless, we might still want to start helpfully
+        }
 
         app.listen(PORT, () => {
             logger.info(`🚀 WMS Backend server running on port ${PORT}`);
@@ -17,7 +27,7 @@ const start = async () => {
         });
     } catch (error) {
         logger.error('❌ Failed to start server:', error);
-        process.exit(1);
+        // Fallback for extreme cases
     }
 };
 
