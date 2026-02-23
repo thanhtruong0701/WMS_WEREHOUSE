@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { verifyToken } = require('../../middleware/auth.middleware');
+const { login, getProfile, changePassword } = require('./auth.controller');
 
 /**
  * @swagger

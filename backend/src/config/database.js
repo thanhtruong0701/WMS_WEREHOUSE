@@ -7,7 +7,7 @@ const connectionString = process.env.DATABASE_URL;
 const poolConfig = connectionString
   ? {
     connectionString,
-    ssl: { rejectUnauthorized: false } // Required for Supabase/external connections
+    ssl: connectionString.includes('localhost') ? false : { rejectUnauthorized: false }
   }
   : {
     host: process.env.DB_HOST || 'localhost',

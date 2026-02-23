@@ -25,7 +25,9 @@ INSERT INTO materials (id, code, name, unit, supplier, warehouse_id, warehouse_l
     ('c1000000-0000-0000-0000-000000000005', 'MAT-005', 'Dây kéo YKK 20cm', 'Cái', 'YKK Vietnam', 'b1000000-0000-0000-0000-000000000001', 'A3-01', 500),
     ('c1000000-0000-0000-0000-000000000006', 'MAT-006', 'Nhãn Dệt Size L', 'Cái', 'Công ty Nhãn Mác HN', 'b1000000-0000-0000-0000-000000000001', 'A3-02', 2000),
     ('c1000000-0000-0000-0000-000000000007', 'MAT-007', 'Vải Lót Lụa', 'M', 'Công ty Dệt Phong Phú', 'b1000000-0000-0000-0000-000000000002', 'B1-01', 80),
-    ('c1000000-0000-0000-0000-000000000008', 'MAT-008', 'Mex Dính', 'M', 'Công ty Phụ Liệu Sài Gòn', 'b1000000-0000-0000-0000-000000000002', 'B1-02', 60);
+    ('c1000000-0000-0000-0000-000000000008', 'MAT-008', 'Mex Dính', 'M', 'Công ty Phụ Liệu Sài Gòn', 'b1000000-0000-0000-0000-000000000002', 'B1-02', 60),
+    ('c1000000-0000-0000-0000-000000000009', 'MAT-009', 'Chỉ thêu 120D', 'Cuộn', 'Coats Phong Phú', 'b1000000-0000-0000-0000-000000000001', 'A2-03', 30),
+    ('c1000000-0000-0000-0000-000000000010', 'MAT-010', 'Bao bì PE 40x60', 'Cái', 'Công ty Nhựa Rạng Đông', 'b1000000-0000-0000-0000-000000000002', 'B2-01', 500);
 
 -- FG Products
 INSERT INTO fg_products (id, code, name, customer, order_no, size, color, unit, warehouse_id, low_stock_threshold) VALUES
@@ -36,7 +38,9 @@ INSERT INTO fg_products (id, code, name, customer, order_no, size, color, unit, 
     ('d1000000-0000-0000-0000-000000000005', 'FG-002', 'Quần Short Nữ', 'Zara Vietnam', 'PO-2025-002', 'M', 'Đen', 'PCS', 'b1000000-0000-0000-0000-000000000003', 30),
     ('d1000000-0000-0000-0000-000000000006', 'FG-003', 'Áo Khoác Gió', 'Decathlon', 'PO-2025-003', 'M', 'Xanh Navy', 'PCS', 'b1000000-0000-0000-0000-000000000004', 20),
     ('d1000000-0000-0000-0000-000000000007', 'FG-003', 'Áo Khoác Gió', 'Decathlon', 'PO-2025-003', 'L', 'Xanh Navy', 'PCS', 'b1000000-0000-0000-0000-000000000004', 20),
-    ('d1000000-0000-0000-0000-000000000008', 'FG-003', 'Áo Khoác Gió', 'Decathlon', 'PO-2025-003', 'XL', 'Xanh Navy', 'PCS', 'b1000000-0000-0000-0000-000000000004', 20);
+    ('d1000000-0000-0000-0000-000000000008', 'FG-003', 'Áo Khoác Gió', 'Decathlon', 'PO-2025-003', 'XL', 'Xanh Navy', 'PCS', 'b1000000-0000-0000-0000-000000000004', 20),
+    ('d1000000-0000-0000-0000-000000000009', 'FG-004', 'Quần Tây Âu Nam', 'H&M Vietnam', 'PO-2025-004', '32', 'Xanh Đen', 'PCS', 'b1000000-0000-0000-0000-000000000004', 25),
+    ('d1000000-0000-0000-0000-000000000010', 'FG-005', 'Váy Maxi Nữ', 'Zara Vietnam', 'PO-2025-005', 'Free', 'Hoa Nhí', 'PCS', 'b1000000-0000-0000-0000-000000000003', 15);
 
 -- Inventory Transactions for Materials (confirmed)
 INSERT INTO inventory_transactions (material_id, warehouse_id, transaction_type, quantity, unit, transaction_date, reference_no, supplier, status, created_by, confirmed_by, confirmed_at) VALUES
@@ -67,3 +71,28 @@ INSERT INTO shipment_transactions (fg_product_id, warehouse_id, customer, quanti
     ('d1000000-0000-0000-0000-000000000003', 'b1000000-0000-0000-0000-000000000003', 'H&M Vietnam', 400, 'PCS', '2025-10-06', 'SHP-2025-001', 'INV-2025-001', 'confirmed', 'a1000000-0000-0000-0000-000000000002', 'a1000000-0000-0000-0000-000000000001', NOW()),
     ('d1000000-0000-0000-0000-000000000004', 'b1000000-0000-0000-0000-000000000003', 'Zara Vietnam', 200, 'PCS', '2025-10-10', 'SHP-2025-002', 'INV-2025-002', 'confirmed', 'a1000000-0000-0000-0000-000000000002', 'a1000000-0000-0000-0000-000000000001', NOW()),
     ('d1000000-0000-0000-0000-000000000006', 'b1000000-0000-0000-0000-000000000004', 'Decathlon', 150, 'PCS', '2025-10-12', 'SHP-2025-003', 'INV-2025-003', 'confirmed', 'a1000000-0000-0000-0000-000000000002', 'a1000000-0000-0000-0000-000000000001', NOW());
+
+-- ============================================================
+-- ADDITIONAL SEED DATA (Snapshots & more Transactions)
+-- ============================================================
+
+-- Initial Material Inventory Snapshots for January 2025
+INSERT INTO material_inventory (material_id, period_date, opening_stock, total_in, total_out) VALUES
+    ('c1000000-0000-0000-0000-000000000001', '2025-01-01', 0, 800, 200),
+    ('c1000000-0000-0000-0000-000000000002', '2025-01-01', 0, 800, 350),
+    ('c1000000-0000-0000-0000-000000000003', '2025-01-01', 0, 200, 0),
+    ('c1000000-0000-0000-0000-000000000004', '2025-01-01', 0, 5000, 0),
+    ('c1000000-0000-0000-0000-000000000005', '2025-01-01', 0, 3000, 0);
+
+-- Initial FG Inventory Snapshots for October 2025
+INSERT INTO fg_inventory (fg_product_id, period_date, opening_stock, production_in, shipment_out) VALUES
+    ('d1000000-0000-0000-0000-000000000001', '2025-10-01', 0, 500, 300),
+    ('d1000000-0000-0000-0000-000000000002', '2025-10-01', 0, 800, 500),
+    ('d1000000-0000-0000-0000-000000000003', '2025-10-01', 0, 600, 400),
+    ('d1000000-0000-0000-0000-000000000004', '2025-10-01', 0, 400, 200),
+    ('d1000000-0000-0000-0000-000000000006', '2025-10-01', 0, 300, 150);
+
+-- Audit Logs (Example actions)
+INSERT INTO audit_logs (user_id, username, action, table_name, record_id, new_values) VALUES
+    ('a1000000-0000-0000-0000-000000000001', 'admin', 'CREATE', 'users', 'a1000000-0000-0000-0000-000000000001', '{"full_name": "Administrator", "role": "admin"}'),
+    ('a1000000-0000-0000-0000-000000000001', 'admin', 'CREATE', 'warehouses', 'b1000000-0000-0000-0000-000000000001', '{"name": "Kho Nguyên Vật Liệu 01"}');

@@ -2,12 +2,23 @@
 -- WMS Database Schema
 -- ============================================================
 
+DROP TABLE IF EXISTS audit_logs CASCADE;
+DROP TABLE IF EXISTS shipment_transactions CASCADE;
+DROP TABLE IF EXISTS production_transactions CASCADE;
+DROP TABLE IF EXISTS fg_inventory CASCADE;
+DROP TABLE IF EXISTS fg_products CASCADE;
+DROP TABLE IF EXISTS inventory_transactions CASCADE;
+DROP TABLE IF EXISTS material_inventory CASCADE;
+DROP TABLE IF EXISTS materials CASCADE;
+DROP TABLE IF EXISTS warehouses CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- ============================================================
 -- USERS
 -- ============================================================
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     username VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
@@ -23,7 +34,7 @@ CREATE TABLE users (
 -- ============================================================
 -- WAREHOUSES
 -- ============================================================
-CREATE TABLE warehouses (
+CREATE TABLE IF NOT EXISTS warehouses (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     code VARCHAR(20) UNIQUE NOT NULL,
     name VARCHAR(100) NOT NULL,
@@ -39,7 +50,7 @@ CREATE TABLE warehouses (
 -- ============================================================
 -- MATERIALS (Nguyên Vật Liệu)
 -- ============================================================
-CREATE TABLE materials (
+CREATE TABLE IF NOT EXISTS materials (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     code VARCHAR(50) UNIQUE NOT NULL,
     name VARCHAR(200) NOT NULL,
@@ -62,7 +73,7 @@ CREATE INDEX idx_materials_warehouse ON materials(warehouse_id);
 -- ============================================================
 -- MATERIAL INVENTORY SNAPSHOT (Tồn kho theo kỳ)
 -- ============================================================
-CREATE TABLE material_inventory (
+CREATE TABLE IF NOT EXISTS material_inventory (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     material_id UUID NOT NULL REFERENCES materials(id) ON DELETE CASCADE,
     period_date DATE NOT NULL,
@@ -78,7 +89,7 @@ CREATE TABLE material_inventory (
 -- ============================================================
 -- INVENTORY TRANSACTIONS (Material In/Out)
 -- ============================================================
-CREATE TABLE inventory_transactions (
+CREATE TABLE IF NOT EXISTS inventory_transactions (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     material_id UUID NOT NULL REFERENCES materials(id) ON DELETE RESTRICT,
     warehouse_id UUID REFERENCES warehouses(id),
@@ -106,7 +117,7 @@ CREATE INDEX idx_inv_trans_status ON inventory_transactions(status);
 -- ============================================================
 -- FG PRODUCTS (Thành Phẩm)
 -- ============================================================
-CREATE TABLE fg_products (
+CREATE TABLE IF NOT EXISTS fg_products (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     code VARCHAR(50) NOT NULL,
     name VARCHAR(200) NOT NULL,
@@ -133,7 +144,7 @@ CREATE INDEX idx_fg_warehouse ON fg_products(warehouse_id);
 -- ============================================================
 -- FG INVENTORY SNAPSHOT
 -- ============================================================
-CREATE TABLE fg_inventory (
+CREATE TABLE IF NOT EXISTS fg_inventory (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     fg_product_id UUID NOT NULL REFERENCES fg_products(id) ON DELETE CASCADE,
     period_date DATE NOT NULL,
@@ -149,7 +160,7 @@ CREATE TABLE fg_inventory (
 -- ============================================================
 -- PRODUCTION TRANSACTIONS (FG Nhập từ sản xuất)
 -- ============================================================
-CREATE TABLE production_transactions (
+CREATE TABLE IF NOT EXISTS production_transactions (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     fg_product_id UUID NOT NULL REFERENCES fg_products(id) ON DELETE RESTRICT,
     warehouse_id UUID REFERENCES warehouses(id),
@@ -174,7 +185,7 @@ CREATE INDEX idx_prod_trans_status ON production_transactions(status);
 -- ============================================================
 -- SHIPMENT TRANSACTIONS (FG Xuất cho khách hàng)
 -- ============================================================
-CREATE TABLE shipment_transactions (
+CREATE TABLE IF NOT EXISTS shipment_transactions (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     fg_product_id UUID NOT NULL REFERENCES fg_products(id) ON DELETE RESTRICT,
     warehouse_id UUID REFERENCES warehouses(id),
@@ -201,7 +212,7 @@ CREATE INDEX idx_ship_trans_status ON shipment_transactions(status);
 -- ============================================================
 -- AUDIT LOGS
 -- ============================================================
-CREATE TABLE audit_logs (
+CREATE TABLE IF NOT EXISTS audit_logs (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID REFERENCES users(id),
     username VARCHAR(50),
