@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const { getWarehouses, createWarehouse, updateWarehouse, getAuditLogs } = require('./warehouses.controller');
-const { authenticate, authorize } = require('../../middleware/auth.middleware');
+const { verifyToken, checkRole } = require('../../middleware/auth.middleware');
 
-router.use(authenticate);
+router.use(verifyToken);
 
 router.get('/', getWarehouses);
-router.post('/', authorize('admin'), createWarehouse);
-router.put('/:id', authorize('admin'), updateWarehouse);
-router.get('/audit-logs', authorize('admin'), getAuditLogs);
+router.post('/', checkRole('admin'), createWarehouse);
+router.put('/:id', checkRole('admin'), updateWarehouse);
+router.get('/audit-logs', checkRole('admin'), getAuditLogs);
 
 module.exports = router;

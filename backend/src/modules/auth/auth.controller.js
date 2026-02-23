@@ -15,17 +15,20 @@ const login = async (req, res, next) => {
         );
 
         if (!result.rows.length) {
-            return res.status(401).json({ success: false, message: 'Tên đăng nhập hoặc mật khẩu không đúng' });
+            return res.status(404).json({ success: false, message: 'Không tìm thấy người dùng' });
         }
 
         const user = result.rows[0];
+
+        // 1. Check is_active first
         if (!user.is_active) {
             return res.status(401).json({ success: false, message: 'Tài khoản đã bị vô hiệu hóa' });
         }
 
+        // 2. Compare password with bcrypt
         const isValid = await bcrypt.compare(password, user.password_hash);
         if (!isValid) {
-            return res.status(401).json({ success: false, message: 'Tên đăng nhập hoặc mật khẩu không đúng' });
+            return res.status(401).json({ success: false, message: 'Mật khẩu không chính xác' });
         }
 
         const token = jwt.sign(

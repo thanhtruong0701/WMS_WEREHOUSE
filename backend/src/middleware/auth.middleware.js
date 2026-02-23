@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { query } = require('../config/database');
 
-const authenticate = async (req, res, next) => {
+const verifyToken = async (req, res, next) => {
     try {
         const authHeader = req.headers.authorization;
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -30,7 +30,7 @@ const authenticate = async (req, res, next) => {
     }
 };
 
-const authorize = (...roles) => {
+const checkRole = (...roles) => {
     return (req, res, next) => {
         if (!req.user) {
             return res.status(401).json({ success: false, message: 'Authentication required' });
@@ -45,4 +45,4 @@ const authorize = (...roles) => {
     };
 };
 
-module.exports = { authenticate, authorize };
+module.exports = { verifyToken, checkRole };

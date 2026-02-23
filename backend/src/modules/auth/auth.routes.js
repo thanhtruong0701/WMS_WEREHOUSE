@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { login, getProfile, changePassword } = require('./auth.controller');
-const { authenticate } = require('../../middleware/auth.middleware');
+const { verifyToken } = require('../../middleware/auth.middleware');
 
 /**
  * @swagger
@@ -24,7 +23,7 @@ const { authenticate } = require('../../middleware/auth.middleware');
  *         description: Đăng nhập thành công, trả về JWT token
  */
 router.post('/login', login);
-router.get('/profile', authenticate, getProfile);
-router.put('/change-password', authenticate, changePassword);
+router.get('/profile', verifyToken, getProfile);
+router.put('/change-password', verifyToken, changePassword);
 
 module.exports = router;
