@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: wms_postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-wms_db}
+      POSTGRES_USER: ${POSTGRES_USER:-wms_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-123456Qwe@}
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/sql/001_schema.sql:/docker-entrypoint-initdb.d/001_schema.sql
+      - ./backend/sql/002_seed.sql:/docker-entrypoint-initdb.d/002_seed.sql
+    healthcheck:
+      test: [ 'CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-wms_user} -d ${POSTGRES_DB:-wms_db}' ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: wms_backend
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB:-wms_db}
+      DB_USER: ${POSTGRES_USER:-wms_user}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-123456Qwe@}
+      JWT_SECRET: ${JWT_SECRET:-super_secret_jwt_key_change_in_production}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-24h}
+      FRONTEND_URL: http://localhost:3000
+    ports:
+      - '3001:3001'
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+      - uploads_data:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: npm run dev
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: wms_frontend
+    environment:
+      VITE_API_URL: http://localhost:3001/api
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    command: npm run dev
+
+volumes:
+  postgres_data:
+  uploads_data:

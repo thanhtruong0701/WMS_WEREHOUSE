@@ -1,0 +1,113 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #f0f2f5;
+  color: #1a1a2e;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f0f2f5; }
+::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #999; }
+
+/* Layout */
+.site-layout { min-height: 100vh; }
+.site-layout-content { margin: 16px; }
+
+/* Sidebar */
+.logo-area {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  background: #0A1520;
+  border-bottom: 1px solid #1E3A5F;
+}
+
+.logo-text {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.logo-sub {
+  color: #8BA3C0;
+  font-size: 11px;
+  margin-top: 2px;
+  text-align: center;
+}
+
+/* Stat Cards */
+.stat-card {
+  border-radius: 12px !important;
+  border: none !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08) !important;
+  transition: transform 0.2s, box-shadow 0.2s;
+  overflow: hidden;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12) !important;
+}
+
+.stat-card .ant-card-body { padding: 20px 24px; }
+
+/* Page header */
+.page-header {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.page-header h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #1E3A5F;
+}
+
+/* Table card */
+.table-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+
+/* Tag overrides */
+.ant-tag { border-radius: 20px; font-weight: 500; }
+
+/* Form */
+.ant-form-item-label > label { font-weight: 500; }
+.ant-modal-content { border-radius: 16px !important; }
+.ant-drawer-content-wrapper { border-radius: 16px 0 0 16px !important; }
+
+/* Buttons */
+.ant-btn { border-radius: 8px !important; font-weight: 500; }
+.ant-btn-primary { background: #1E3A5F !important; }
+
+/* Alert banner */
+.low-stock-alert { border-radius: 10px; border-left: 4px solid #fa8c16; }
+
+/* Loading */
+.page-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+}
