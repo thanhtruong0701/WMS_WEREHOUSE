@@ -268,7 +268,9 @@ const importMaterial = async (req, res, next) => {
         const wb = new ExcelJS.Workbook();
         await wb.xlsx.load(req.file.buffer);
 
-        const ws = wb.worksheets[0];
+        const ws = wb.getWorksheet(1) || wb.worksheets[0];
+        if (!ws) return res.status(400).json({ success: false, message: 'File Excel không có dữ liệu (Worksheet không tồn tại)' });
+
         const imported = [];
         const errors = [];
 
@@ -340,7 +342,9 @@ const importFG = async (req, res, next) => {
 
         const wb = new ExcelJS.Workbook();
         await wb.xlsx.load(req.file.buffer);
-        const ws = wb.worksheets[0];
+        const ws = wb.getWorksheet(1) || wb.worksheets[0];
+        if (!ws) return res.status(400).json({ success: false, message: 'File Excel không có dữ liệu' });
+
         const imported = [];
 
         let headerRow = null;
