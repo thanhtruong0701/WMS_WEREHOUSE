@@ -11,9 +11,13 @@ const fs = require('fs');
 
 const app = express();
 
-// Ensure logs directory exists
-const logsDir = path.join(__dirname, '../logs');
-if (!fs.existsSync(logsDir)) fs.mkdirSync(logsDir, { recursive: true });
+// Ensure logs directory exists (optional for serverless)
+try {
+    const logsDir = path.join(__dirname, '../logs');
+    if (!fs.existsSync(logsDir)) fs.mkdirSync(logsDir, { recursive: true });
+} catch (e) {
+    console.warn('⚠️ Could not create logs directory (read-only filesystem?):', e.message);
+}
 
 // Security & middleware
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
