@@ -6,9 +6,12 @@ const connectionString = process.env.DATABASE_URL;
 
 if (process.env.NODE_ENV === 'production' || process.env.VERCEL) {
   if (!connectionString) {
-    console.error('❌ CRITICAL: DATABASE_URL is missing in production/cloud environment!');
+    const errorMsg = '❌ CRITICAL ERROR: DATABASE_URL environment variable is MISSING on Vercel!';
+    console.error(errorMsg);
+    // Don't fall back to local in cloud - it will always fail and mislead
+    throw new Error(errorMsg);
   } else {
-    console.log('🌐 Using cloud database connection string');
+    console.log('🌐 Connected using Cloud Database Pooler');
   }
 }
 
