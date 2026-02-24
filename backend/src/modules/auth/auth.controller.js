@@ -31,9 +31,11 @@ const login = async (req, res, next) => {
             return res.status(401).json({ success: false, message: 'Mật khẩu không chính xác' });
         }
 
+        const jwtSecret = process.env.JWT_SECRET || 'fallback_secret_for_dev_only_please_set_in_vercel';
+
         const token = jwt.sign(
             { userId: user.id, username: user.username, role: user.role },
-            process.env.JWT_SECRET,
+            jwtSecret,
             { expiresIn: process.env.JWT_EXPIRES_IN || '24h' }
         );
 
