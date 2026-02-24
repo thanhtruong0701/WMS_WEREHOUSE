@@ -40,29 +40,6 @@ app.get('/api/health', (req, res) => {
     res.json({ success: true, message: 'WMS API is running', timestamp: new Date().toISOString() });
 });
 
-// Debug endpoint for Vercel (safe info)
-app.get('/api/debug-status', async (req, res) => {
-    const { pool } = require('./config/database');
-    const dbStatus = { connected: false, error: null };
-    try {
-        await pool.query('SELECT 1');
-        dbStatus.connected = true;
-    } catch (e) {
-        dbStatus.error = e.message;
-    }
-
-    res.json({
-        success: true,
-        env: {
-            NODE_ENV: process.env.NODE_ENV,
-            HAS_DB_URL: !!process.env.DATABASE_URL,
-            HAS_JWT_SECRET: !!process.env.JWT_SECRET,
-        },
-        db: dbStatus,
-        vercel: !!process.env.VERCEL
-    });
-});
-
 // Swagger docs
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
     customCss: '.swagger-ui .topbar { background-color: #1E3A5F; }',
