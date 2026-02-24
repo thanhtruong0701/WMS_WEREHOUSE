@@ -9,6 +9,10 @@ import FGListPage from './pages/FG/FGListPage';
 import TransactionsPage from './pages/Transactions/TransactionsPage';
 import UsersPage from './pages/Users/UsersPage';
 import AuditLogPage from './pages/AuditLog/AuditLogPage';
+import WarehouseListPage from './pages/Warehouses/WarehouseListPage';
+import InventoryReportPage from './pages/Reports/InventoryReportPage';
+import ProfilePage from './pages/Profile/ProfilePage';
+import ChangePasswordPage from './pages/Profile/ChangePasswordPage';
 
 const PrivateRoute = ({ children, adminOnly = false }) => {
     const { isAuthenticated, isAdmin } = useAuth();
@@ -26,7 +30,11 @@ const AppRoutes = () => {
                 <Route index element={<DashboardPage />} />
                 <Route path="materials" element={<MaterialListPage />} />
                 <Route path="fg-products" element={<FGListPage />} />
+                <Route path="warehouses" element={<WarehouseListPage />} />
+                <Route path="reports" element={<InventoryReportPage />} />
                 <Route path="transactions" element={<TransactionsPage />} />
+                <Route path="profile" element={<ProfilePage />} />
+                <Route path="change-password" element={<ChangePasswordPage />} />
                 <Route path="users" element={<PrivateRoute adminOnly><UsersPage /></PrivateRoute>} />
                 <Route path="audit-log" element={<PrivateRoute adminOnly><AuditLogPage /></PrivateRoute>} />
             </Route>

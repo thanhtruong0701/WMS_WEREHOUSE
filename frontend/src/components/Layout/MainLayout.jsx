@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import {
-    Layout, Menu, Avatar, Dropdown, Badge, Tooltip, Typography, Space,
+    Layout, Menu, Avatar, Dropdown, Badge, Tooltip, Typography, Space, Card,
 } from 'antd';
 import {
-    DashboardOutlined, AppstoreOutlined, GoldOutlined, SwapOutlined,
-    TeamOutlined, AuditOutlined, MenuFoldOutlined, MenuUnfoldOutlined,
+    DashboardOutlined, AppstoreOutlined, GoldOutlined, SwapOutlined, FileTextOutlined,
+    HomeOutlined, TeamOutlined, AuditOutlined, MenuFoldOutlined, MenuUnfoldOutlined,
     UserOutlined, LogoutOutlined, KeyOutlined, BellOutlined,
 } from '@ant-design/icons';
 import { useAuth } from '../../context/AuthContext';
@@ -17,7 +17,9 @@ const MENU_ITEMS = [
     { key: '/', icon: <DashboardOutlined />, label: 'Dashboard' },
     { key: '/materials', icon: <AppstoreOutlined />, label: 'Nguyên Vật Liệu' },
     { key: '/fg-products', icon: <GoldOutlined />, label: 'Thành Phẩm (FG)' },
+    { key: '/warehouses', icon: <HomeOutlined />, label: 'Danh Mục Kho' },
     { key: '/transactions', icon: <SwapOutlined />, label: 'Giao Dịch' },
+    { key: '/reports', icon: <FileTextOutlined />, label: 'Báo Cáo' },
 ];
 
 const ADMIN_MENU_ITEMS = [
@@ -43,6 +45,8 @@ export default function MainLayout() {
 
     const handleUserMenu = ({ key }) => {
         if (key === 'logout') { logout(); navigate('/login'); }
+        if (key === 'profile') { navigate('/profile'); }
+        if (key === 'password') { navigate('/change-password'); }
     };
 
     const menuItems = [
@@ -106,9 +110,29 @@ export default function MainLayout() {
 
                     <Space size={16}>
                         <Tooltip title="Thông báo">
-                            <Badge count={3} size="small">
-                                <BellOutlined style={{ fontSize: 18, cursor: 'pointer', color: '#555' }} />
-                            </Badge>
+                            <Dropdown
+                                placement="bottomRight"
+                                trigger={['click']}
+                                dropdownRender={() => (
+                                    <Card
+                                        title="Thông báo"
+                                        size="small"
+                                        style={{ width: 300, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                                        bodyStyle={{ padding: 0, maxHeight: 400, overflowY: 'auto' }}
+                                    >
+                                        <div style={{ padding: '12px 16px', borderBottom: '1px solid #f0f0f0' }}>
+                                            <Badge status="warning" text="Cảnh báo tồn kho" />
+                                        </div>
+                                        <div style={{ padding: 16, textAlign: 'center' }}>
+                                            <Text type="secondary">Hiện chưa có thông báo mới quan trọng.</Text>
+                                        </div>
+                                    </Card>
+                                )}
+                            >
+                                <Badge count={0} size="small">
+                                    <BellOutlined style={{ fontSize: 18, cursor: 'pointer', color: '#555' }} />
+                                </Badge>
+                            </Dropdown>
                         </Tooltip>
 
                         <Dropdown menu={{ items: userMenuItems, onClick: handleUserMenu }} placement="bottomRight">

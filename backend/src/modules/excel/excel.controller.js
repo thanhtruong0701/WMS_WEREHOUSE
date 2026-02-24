@@ -75,7 +75,19 @@ const exportMaterial = async (req, res, next) => {
         for (let i = 0; i < materials.rows.length; i++) {
             const mat = materials.rows[i];
 
-            // Calculate stock for this material within date range
+            // 1. Calculate Opening Stock (Balance before date_from)
+            let openingStock = 0;
+            if (date_from) {
+                const openingData = await query(
+                    `SELECT COALESCE(SUM(CASE WHEN transaction_type='in' THEN quantity ELSE -quantity END), 0) AS balance
+                     FROM inventory_transactions 
+                     WHERE material_id=$1 AND status='confirmed' AND deleted_at IS NULL AND transaction_date < $2`,
+                    [mat.id, date_from]
+                );
+                openingStock = parseFloat(openingData.rows[0].balance);
+            }
+
+            // 2. Calculate Transactions within range
             const dateConditions = ['it.material_id=$1', "it.status='confirmed'", 'it.deleted_at IS NULL'];
             const dateParams = [mat.id];
             if (date_from) { dateParams.push(date_from); dateConditions.push(`it.transaction_date >= $${dateParams.length}`); }
@@ -91,6 +103,7 @@ const exportMaterial = async (req, res, next) => {
 
             const totalIn = parseFloat(stockData.rows[0].total_in);
             const totalOut = parseFloat(stockData.rows[0].total_out);
+            const closingStock = openingStock + totalIn - totalOut;
 
             const row = ws.addRow({
                 stt: i + 1,
@@ -99,10 +112,10 @@ const exportMaterial = async (req, res, next) => {
                 unit: mat.unit,
                 supplier: mat.supplier,
                 warehouse_location: mat.warehouse_location,
-                opening_stock: 0,
+                opening_stock: openingStock,
                 total_in: totalIn,
                 total_out: totalOut,
-                closing_stock: totalIn - totalOut,
+                closing_stock: closingStock,
                 warehouse_name: mat.warehouse_name,
             });
 
@@ -199,6 +212,23 @@ const exportFG = async (req, res, next) => {
         for (let i = 0; i < fgProducts.rows.length; i++) {
             const fg = fgProducts.rows[i];
 
+            // 1. Calculate Opening Stock for FG (Production - Shipment before date_from)
+            let openingStock = 0;
+            if (date_from) {
+                const [openingProd, openingShip] = await Promise.all([
+                    query(
+                        "SELECT COALESCE(SUM(quantity),0) AS total FROM production_transactions WHERE fg_product_id=$1 AND status='confirmed' AND deleted_at IS NULL AND transaction_date < $2",
+                        [fg.id, date_from]
+                    ),
+                    query(
+                        "SELECT COALESCE(SUM(quantity),0) AS total FROM shipment_transactions WHERE fg_product_id=$1 AND status='confirmed' AND deleted_at IS NULL AND transaction_date < $2",
+                        [fg.id, date_from]
+                    ),
+                ]);
+                openingStock = parseFloat(openingProd.rows[0].total) - parseFloat(openingShip.rows[0].total);
+            }
+
+            // 2. Calculate Transactions within range
             const dateParams = [fg.id];
             const prodConditions = ['pt.fg_product_id=$1', "pt.status='confirmed'", 'pt.deleted_at IS NULL'];
             const shipConditions = ['st.fg_product_id=$1', "st.status='confirmed'", 'st.deleted_at IS NULL'];
@@ -221,6 +251,7 @@ const exportFG = async (req, res, next) => {
 
             const productionIn = parseFloat(prodData.rows[0].total);
             const shipmentOut = parseFloat(shipData.rows[0].total);
+            const closingStock = openingStock + productionIn - shipmentOut;
 
             const row = ws.addRow({
                 stt: i + 1,
@@ -230,10 +261,10 @@ const exportFG = async (req, res, next) => {
                 order_no: fg.order_no,
                 size: fg.size,
                 color: fg.color,
-                opening_stock: 0,
+                opening_stock: openingStock,
                 production_in: productionIn,
                 shipment_out: shipmentOut,
-                balance_stock: productionIn - shipmentOut,
+                balance_stock: closingStock,
                 unit: fg.unit,
                 warehouse_name: fg.warehouse_name,
             });
