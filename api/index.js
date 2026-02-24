@@ -12,7 +12,13 @@ try {
             success: false,
             message: 'Bridge initialization failed',
             error: error.message,
-            stack: error.stack
+            code: error.code,
+            env: {
+                HAS_DB_URL: !!process.env.DATABASE_URL,
+                NODE_ENV: process.env.NODE_ENV,
+                ROOT_DIR: __dirname
+            },
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
         });
     });
     module.exports = app;
