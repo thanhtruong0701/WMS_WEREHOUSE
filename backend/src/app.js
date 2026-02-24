@@ -11,18 +11,20 @@ const fs = require('fs');
 
 const app = express();
 
-// Ensure logs directory exists (optional for serverless)
-try {
-    const logsDir = path.join(__dirname, '../logs');
-    if (!fs.existsSync(logsDir)) fs.mkdirSync(logsDir, { recursive: true });
-} catch (e) {
-    console.warn('⚠️ Could not create logs directory (read-only filesystem?):', e.message);
+// Ensure logs directory exists (skip in serverless)
+if (process.env.NODE_ENV !== 'production') {
+    try {
+        const logsDir = path.join(__dirname, '../logs');
+        if (!fs.existsSync(logsDir)) fs.mkdirSync(logsDir, { recursive: true });
+    } catch (e) {
+        console.warn('⚠️ Could not create logs directory:', e.message);
+    }
 }
 
 // Security & middleware
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: true, // Allow all for simplicity in this demo, or specifically your Vercel URL
     credentials: true,
 }));
 app.use(morgan('dev'));
