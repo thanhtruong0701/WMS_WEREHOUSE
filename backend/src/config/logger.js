@@ -18,14 +18,18 @@ const logger = winston.createLogger({
                 })
             ),
         }),
-        new winston.transports.File({
-            filename: path.join(__dirname, '../../logs/error.log'),
-            level: 'error',
-        }),
-        new winston.transports.File({
-            filename: path.join(__dirname, '../../logs/combined.log'),
-        }),
     ],
 });
+
+// Add file logging only in non-production environments
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+    logger.add(new winston.transports.File({
+        filename: path.join(__dirname, '../../logs/error.log'),
+        level: 'error',
+    }));
+    logger.add(new winston.transports.File({
+        filename: path.join(__dirname, '../../logs/combined.log'),
+    }));
+}
 
 module.exports = logger;
