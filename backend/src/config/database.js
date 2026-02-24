@@ -1,8 +1,16 @@
 const { Pool } = require('pg');
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 
-// Use DATABASE_URL for Supabase/Production, fallback to individual vars for local
 const connectionString = process.env.DATABASE_URL;
+
+if (process.env.NODE_ENV === 'production' || process.env.VERCEL) {
+  if (!connectionString) {
+    console.error('❌ CRITICAL: DATABASE_URL is missing in production/cloud environment!');
+  } else {
+    console.log('🌐 Using cloud database connection string');
+  }
+}
 
 const poolConfig = connectionString
   ? {
